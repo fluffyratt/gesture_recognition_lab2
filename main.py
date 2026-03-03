@@ -5,14 +5,11 @@ import mediapipe as mp
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(model_complexity=1, min_detection_confidence=0.5, min_tracking_confidence=0.5)
 
-# Якщо в тебе лише одна камера, найчастіше це індекс 0.
-# (В оригінальному прикладі було 1 — для другої камери.)
 cap = cv2.VideoCapture(0)
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1500)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 800)
 
-# Базові пороги під “еталонну” руку (масштабуємо під реальний розмір руки в кадрі)
 standard_pinky_threshold = 40.0          # наскільки “зігнутий” мізинець
 standard_ring_threshold = 40.0           # наскільки “зігнутий” безіменний
 standard_index_middle_separation = 55.0  # мін. відстань між кінчиками 8 та 12 (щоб не “з'єднані”)
@@ -46,9 +43,7 @@ def calculate_thresholds(points):
 
 
 def is_finger_straight_up(points, tip_id, pip_id, mcp_id):
-    """У цій системі координат Y росте вгору (бо y інвертовано в get_points).
-    Тому “палець вгору” означає: tip_y > pip_y > mcp_y.
-    """
+    """ “палець вгору” означає: tip_y > pip_y > mcp_y """
     tip = points[tip_id]
     pip = points[pip_id]
     mcp = points[mcp_id]
@@ -77,8 +72,6 @@ def is_letter_k(points, handedness):
     - вказівний (8) і середній (12) підняті вгору, НЕ з’єднані
     - безіменний (16) і мізинець (20) напівзігнуті
     - великий палець (4) прикриває нігтьові фаланги безіменного/мізинця
-
-    Рух “вперед” у цій версії НЕ перевіряємо (статична конфігурація).
     """
 
     # tips
